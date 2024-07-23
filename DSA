@@ -1,0 +1,81 @@
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+
+public class PowerOfTwoMaxHeap {
+    private ArrayList<Integer> heap;
+    private int numChildren; // 2^k
+
+    // Constructor to initialize the heap with parameter k
+    public PowerOfTwoMaxHeap(int k) {
+        this.heap = new ArrayList<>();
+        this.numChildren = (int) Math.pow(2, k);
+    }
+
+    // Insert method to add a new element
+    public void insert(int value) {
+        heap.add(value);
+        siftUp(heap.size() - 1);
+    }
+
+    // Pop Max method to remove and return the maximum element
+    public int popMax() {
+        if (heap.size() == 0) {
+            throw new NoSuchElementException("Heap is empty");
+        }
+        int maxValue = heap.get(0);
+        int lastValue = heap.remove(heap.size() - 1);
+        if (heap.size() > 0) {
+            heap.set(0, lastValue);
+            siftDown(0);
+        }
+        return maxValue;
+    }
+
+    // Sift up method to maintain heap property after insertion
+    private void siftUp(int index) {
+        while (index > 0) {
+            int parentIndex = (index - 1) / numChildren;
+            if (heap.get(index) > heap.get(parentIndex)) {
+                swap(index, parentIndex);
+                index = parentIndex;
+            } else {
+                break;
+            }
+        }
+    }
+
+    // Sift down method to maintain heap property after popping max
+    private void siftDown(int index) {
+        while (index * numChildren + 1 < heap.size()) {
+            int maxIndex = index;
+            for (int i = 1; i <= numChildren; i++) {
+                int childIndex = index * numChildren + i;
+                if (childIndex < heap.size() && heap.get(childIndex) > heap.get(maxIndex)) {
+                    maxIndex = childIndex;
+                }
+            }
+            if (maxIndex == index) {
+                break;
+            }
+            swap(index, maxIndex);
+            index = maxIndex;
+        }
+    }
+
+    // Swap method to exchange elements in the heap
+    private void swap(int i, int j) {
+        int temp = heap.get(i);
+        heap.set(i, heap.get(j));
+        heap.set(j, temp);
+    }
+
+    // Method to get the size of the heap
+    public int size() {
+        return heap.size();
+    }
+
+    // Method to check if the heap is empty
+    public boolean isEmpty() {
+        return heap.isEmpty();
+    }
+}
